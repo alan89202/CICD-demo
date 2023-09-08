@@ -115,11 +115,9 @@ resource "aws_instance" "db_instance" {
 
 data "aws_ami" "centos" {
   most_recent = true
-
+  owners = ["aws-marketplace"]
   filter {
     name   = "name"
-    values = ["centos stream 9*"]
+    values = ["CentOS Stream 9*"]
   }
-
-  owners = ["aws-marketplace"]
 }
