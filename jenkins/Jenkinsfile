@@ -6,7 +6,8 @@ pipeline {
  // Define environment variables for AWS credentials
  environment {
   TF_VAR_aws_access_key = credentials('AWSAccessKey')
-  TF_VAR_aws_secret_key = credentials('AWSSecretKey')    
+  TF_VAR_aws_secret_key = credentials('AWSSecretKey')
+  BUCKET_NAME = ''
  }
  stages {
   stage('Terraform Init') {
@@ -30,6 +31,19 @@ pipeline {
     // Apply the Terraform changes within the 'terraform' directory
     dir('terraform') {
      sh 'terraform apply -auto-approve -var-file=variables.tfvars'
+     BUCKET_NAME = sh(script: "terraform output bucket_name", returnStdout: true).trim()
+    }
+   }
+  }
+  stage('Download Elastic APM Agent') {
+   steps {
+    sh "curl -o 'elastic-apm-agent.jar' -L 'https://oss.sonatype.org/service/local/artifact/maven/redirect?r=releases&g=co.elastic.apm&a=elastic-apm-agent&v=LATEST'"
+   }
+  }
+  stage('Upload agent to S3 bucket') {
+   steps {
+    withAWS(credentials: 'AWSKey') {
+     sh "aws s3 cp elastic-apm-agent.jar s3://${BUCKET_NAME}/"
     }
    }
   }
