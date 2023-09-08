@@ -20,3 +20,13 @@ variable "elb_sg" {
   description = "Load Balancer Security Group"
   type        = string
 }
+
+variable "app_sg" {
+  description = "Tomcat Security Group"
+  type        = string
+}
+
+variable "backend_sg" {
+  description = "Backend Security Group"
+  type        = string
+}
