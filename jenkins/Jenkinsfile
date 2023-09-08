@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Test Connection') {
             steps {
-                echo 'La conexión entre Jenkins y GitHub funciona automaticamente. Prueba 2'
+                echo 'La conexión entre Jenkins y GitHub funciona automaticamente. Prueba'
             }
         }
     }
