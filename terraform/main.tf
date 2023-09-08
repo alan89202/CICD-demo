@@ -18,6 +18,10 @@ resource "aws_s3_bucket_acl" "vprofile_bucket" {
 }
 
 //Create security groups used within application
+data "http" "ip" {
+  url = "https://ipinfo.io"
+}
+
 resource "aws_security_group" "vprofile-ELB-SG" {
   name        = var.elb_sg
   description = "Security group for ELB"
@@ -47,13 +51,13 @@ resource "aws_security_group" "vprofile-APP-SG" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [aws_security_group.my_public_ip]
+    cidr_blocks = format("%s/32", jsondecode(data.http.ipinfo.body).ip)
   }
   ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = [aws_security_group.my_public_ip]
+    cidr_blocks = format("%s/32", jsondecode(data.http.ipinfo.body).ip)
   }
 }
 resource "aws_security_group" "vprofile-BACKEND-SG" {
@@ -87,6 +91,6 @@ resource "aws_security_group" "vprofile-BACKEND-SG" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [aws_security_group.my_public_ip]
+    cidr_blocks = format("%s/32", jsondecode(data.http.ipinfo.body).ip)
   }
 }
