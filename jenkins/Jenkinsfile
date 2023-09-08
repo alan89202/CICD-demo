@@ -16,13 +16,15 @@ pipeline {
     steps {
       // Change to the 'terraform' directory and run 'terraform commands'
       dir('terraform') {
-       sh """
-        terraform init
-        terraform plan -var-file=variables.tfvars
-        terraform apply -auto-approve -var-file=variables.tfvars
-       """ 
-       //Save output into variable
-       BUCKET_NAME = sh(returnStdout: true, script: "terraform output bucket_name").trim()
+       script {
+        sh """
+         terraform init
+         terraform plan -var-file=variables.tfvars
+         terraform apply -auto-approve -var-file=variables.tfvars
+        """ 
+        //Save output into variable
+        BUCKET_NAME = sh(returnStdout: true, script: "terraform output bucket_name").trim()
+       }
       }
     }
   }
