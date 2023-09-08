@@ -31,14 +31,9 @@ pipeline {
     // Apply the Terraform changes within the 'terraform' directory
     dir('terraform') {
      sh 'terraform apply -auto-approve -var-file=variables.tfvars'
-     BUCKET_NAME = sh(script: "terraform output bucket_name", returnStdout: true).trim()
-    }
-   }
-  }
-  stage('Capture terraform variable') {
-   steps {
-    dir('terraform') {
-     BUCKET_NAME = sh(script: "terraform output bucket_name", returnStdout: true).trim()
+     script {
+      env.BUCKET_NAME = sh(script: "terraform output bucket_name", returnStdout: true).trim()
+     }
     }
    }
   }
