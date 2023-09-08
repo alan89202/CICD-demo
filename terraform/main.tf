@@ -104,7 +104,7 @@ resource "aws_instance" "db_instance" {
   key_name      = var.key_pair_name
   vpc_security_group_ids = [aws_security_group.vprofile-BACKEND-SG.id]
   tags = {
-    Name = var.instance_name
+    Name = var.db_instance_name
     Project = var.project
   }
   root_block_device {
