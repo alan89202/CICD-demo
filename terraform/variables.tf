@@ -46,3 +46,7 @@ variable "key_pair_name" {
   description = "Key pair to attach to EC2"
   type        = string
 }
+variable "project" {
+  description = "application project name"
+  type        = string
+}
