@@ -1,14 +1,38 @@
 pipeline {
-    agent any
-    
-    stages {
-        stage('Test Connection') {
-            steps {
-                echo 'La conexión entre Jenkins y GitHub funciona automaticamente. Prueba'
-            }
-        }
+ agent any
+ // Define environment variables for AWS credentials
+ environment {
+  AWS_ACCESS_KEY = credentials('AWSAccessKey')
+  AWS_SECRET_KEY = credentials('AWSSecretKey')
+ }
+ stages {
+  stage('Terraform Init') {
+    steps {
+      // Change to the 'terraform' directory and run 'terraform init'
+      dir('terraform') {
+       sh 'terraform init'
+      }
     }
+  }
+  stage('Terraform Plan') {
+   steps {
+    // Run 'terraform plan' within the 'terraform' directory
+    dir('terraform') {
+     sh 'terraform plan -var-file=variables.tfvars'
+    }
+   }
+  }
+  stage('Terraform Apply') {
+   steps {
+    // Apply the Terraform changes within the 'terraform' directory
+    dir('terraform') {
+     sh 'terraform apply -auto-approve -var-file=variables.tfvars'
+    }
+   }
+  }
+ }
 }
+
 
 
 
