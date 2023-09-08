@@ -32,7 +32,7 @@ pipeline {
     dir('terraform') {
      sh 'terraform apply -auto-approve -var-file=variables.tfvars'
      script {
-      env.BUCKET_NAME = sh(script: "terraform output bucket_name", returnStdout: true).trim()
+      env.BUCKET_NAME = sh(script: '''terraform output bucket_name | awk -F= '{print $2}' | tr -d ' "' ''', returnStdout: true).trim()
      }
     }
    }
