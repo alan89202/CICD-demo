@@ -1,17 +1,53 @@
 pipeline {
-    agent any 
+    agent any
 
     stages {
-        stage('Create VM') {
+        stage('Clone repo') {
             steps {
-                
+                // Asumiendo que estás usando un webhook o una configuración similar para detectar cambios en tu repositorio,
+                // Jenkins debería clonar automáticamente el repositorio. Si no es así, puedes usar git steps:
+                git credentialsId: 'tu_credencial_id', url: 'https://github.com/tu_usuario/tu_repositorio.git'
             }
         }
-        stage('Install Jenkins') {
+
+        stage('Cambiar al directorio terraform') {
             steps {
-               
+                dir('terraform') {
+                    // Los siguientes pasos se ejecutarán dentro del directorio 'terraform'
+                }
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform init'
+                }
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform plan'
+                }
+            }
+        }
+
+        stage('Aprobación manual') {
+            steps {
+                input message: '¿Deseas aplicar los cambios de Terraform?', ok: 'Aplicar'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform apply -auto-approve'
+                }
             }
         }
     }
 }
+
 
