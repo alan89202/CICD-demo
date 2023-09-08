@@ -118,6 +118,6 @@ data "aws_ami" "centos" {
   owners = ["aws-marketplace"]
   filter {
     name   = "name"
-    values = ["CentOS Stream 9*"]
+    values = [var.centos_ami_name]
   }
 }
