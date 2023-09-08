@@ -101,7 +101,7 @@ resource "aws_security_group" "vprofile-BACKEND-SG" {
 resource "aws_instance" "db_instance" {
   ami           = data.aws_ami.centos.id
   instance_type = var.instance_type
-  key_name      = "vprofile_prod_key"
+  key_name      = var.key_pair_name
   vpc_security_group_ids = [aws_security_group.vprofile-BACKEND-SG.id]
   tags = {
     Name = var.instance_name
@@ -118,7 +118,7 @@ data "aws_ami" "centos" {
 
   filter {
     name   = "name"
-    values = [var.ami_name]
+    values = [var.centos_ami_name]
   }
 
   owners = ["aws-marketplace"]
