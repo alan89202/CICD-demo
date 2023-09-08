@@ -35,6 +35,13 @@ pipeline {
     }
    }
   }
+  stage('Capture terraform variable') {
+   steps {
+    dir('terraform') {
+     BUCKET_NAME = sh(script: "terraform output bucket_name", returnStdout: true).trim()
+    }
+   }
+  }
   stage('Download Elastic APM Agent') {
    steps {
     sh "curl -o 'elastic-apm-agent.jar' -L 'https://oss.sonatype.org/service/local/artifact/maven/redirect?r=releases&g=co.elastic.apm&a=elastic-apm-agent&v=LATEST'"
