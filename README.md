@@ -1,2 +1,2 @@
 # CICD-demo
-Create an elasticsearch cluster using jenkins, terraform and ansible
+Deploy elastic agents in web app using jenkins, terraform and ansible
