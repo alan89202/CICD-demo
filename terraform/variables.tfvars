@@ -1,3 +1,5 @@
 bucket_name = "vprofile-al-ops"
 aws_region = "us-east-1"
 elb_sg = "vprofile-ELB-SG"
+app_sg = "vprofile-APP-SG"
+backend_sg = "vprofile-BACKEND-SG"
