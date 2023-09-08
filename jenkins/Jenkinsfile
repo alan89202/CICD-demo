@@ -1,7 +1,7 @@
 pipeline {
  agent any
  tools {
-  terraform 'TerraformDefault'  // El nombre que diste a tu instalación de Terraform
+  terraform 'TerraformDefault'  
  }
  // Define environment variables for AWS credentials
  environment {
