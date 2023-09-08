@@ -1,3 +1,5 @@
+def BUCKET_NAME 
+
 pipeline {
  agent any
  tools {
@@ -7,37 +9,22 @@ pipeline {
  environment {
   TF_VAR_aws_access_key = credentials('AWSAccessKey')
   TF_VAR_aws_secret_key = credentials('AWSSecretKey')
-  BUCKET_NAME = ''
+  
  }
  stages {
-  stage('Terraform Init') {
+  stage('Terraform') {
     steps {
-      // Change to the 'terraform' directory and run 'terraform init'
+      // Change to the 'terraform' directory and run 'terraform commands'
       dir('terraform') {
-       sh 'terraform init'
+       sh """
+        terraform init
+        terraform plan -var-file=variables.tfvars
+        terraform apply -auto-approve -var-file=variables.tfvars
+       """ 
+       //Save output into variable
+       BUCKET_NAME = sh(returnStdout: true, script: "terraform output bucket_name").trim()
       }
     }
-  }
-  stage('Terraform Plan') {
-   steps {
-    // Run 'terraform plan' within the 'terraform' directory
-    dir('terraform') {
-     sh 'terraform plan -var-file=variables.tfvars'
-    }
-   }
-  }
-  stage('Terraform Apply') {
-   steps {
-    // Apply the Terraform changes within the 'terraform' directory
-    dir('terraform') {
-     sh 'terraform apply -auto-approve -var-file=variables.tfvars'
-     script {
-      def terraformOutput = sh(script: '''terraform output bucket_name | awk -F= '{print $2}' | tr -d ' "' ''', returnStdout: true).trim()
-      echo "Obtained BUCKET_NAME: ${terraformOutput}"
-      env.BUCKET_NAME = terraformOutput
-     }
-    }
-   }
   }
   stage('Download Elastic APM Agent') {
    steps {
