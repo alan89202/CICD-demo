@@ -18,7 +18,7 @@ resource "aws_s3_bucket_acl" "vprofile_bucket" {
 }
 
 //Create security groups used within application
-data "http" "ip" {
+data "http" "ipinfo" {
   url = "https://ipinfo.io"
 }
 
