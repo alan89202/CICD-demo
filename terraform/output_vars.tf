@@ -3,9 +3,9 @@ output "bucket_name" {
 }
 
 data "http" "ip" {
-  url = "http://icanhazip.com"
+  url = "https://ipinfo.io"
 }
 
 output "my_public_ip" {
-  value = "${chomp(data.http.ip.body)}"
+  value = "format("%s/32", jsondecode(data.http.ip.body).ip)"
 }
