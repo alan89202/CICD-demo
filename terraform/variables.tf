@@ -30,3 +30,19 @@ variable "backend_sg" {
   description = "Backend Security Group"
   type        = string
 }
+variable "instance_type" {
+  description = "EC2 instances type"
+  type        = string
+}
+variable "db_instance_name" {
+  description = "EC2 instance name used for the DB"
+  type        = string
+}
+variable "centos_ami_name" {
+  description = "Centos AMI used"
+  type        = string
+}
+variable "key_pair_name" {
+  description = "Key pair to attach to EC2"
+  type        = string
+}
