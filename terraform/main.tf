@@ -43,6 +43,18 @@ resource "aws_security_group" "vprofile-APP-SG" {
     protocol    = "tcp"
     security_groups = [aws_security_group.vprofile-ELB-SG.id]  
   }
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [aws_security_group.my_public_ip]
+  }
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = [aws_security_group.my_public_ip]
+  }
 }
 resource "aws_security_group" "vprofile-BACKEND-SG" {
   name        = var.backend_sg
@@ -66,9 +78,15 @@ resource "aws_security_group" "vprofile-BACKEND-SG" {
     security_groups = [aws_security_group.vprofile-APP-SG.id]  
   }
   ingress {
-      from_port   = 0
-      to_port     = 65535
-      protocol    = "tcp"
-      self        = true  
-    }
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    self        = true  
+  }
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [aws_security_group.my_public_ip]
+  }
 }
