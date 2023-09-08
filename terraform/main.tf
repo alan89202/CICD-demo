@@ -1,3 +1,4 @@
+//Create S3 Bucket to save agents and artifacts
 resource "aws_s3_bucket" "vprofile_bucket" {
   bucket = var.bucket_name
 }
@@ -16,3 +17,20 @@ resource "aws_s3_bucket_acl" "vprofile_bucket" {
   acl    = "private"
 }
 
+//Create security groups used within application
+resource "aws_security_group" "vprofile-ELB-SG" {
+  name        = var.elb_sg
+  description = "Security group for ELB"
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  
+  }
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  
+  }
+}
