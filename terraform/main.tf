@@ -121,5 +121,5 @@ data "aws_ami" "centos" {
     values = ["centos stream 9*"]
   }
 
-  owners = ["amazon"]
+  owners = ["aws-marketplace"]
 }
