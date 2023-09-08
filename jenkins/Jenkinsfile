@@ -1,5 +1,8 @@
 pipeline {
  agent any
+ tools {
+  terraform 'TerraformDefault'  // El nombre que diste a tu instalación de Terraform
+ }
  // Define environment variables for AWS credentials
  environment {
   AWS_ACCESS_KEY = credentials('AWSAccessKey')
