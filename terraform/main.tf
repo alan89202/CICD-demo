@@ -121,5 +121,5 @@ data "aws_ami" "centos" {
     values = [var.centos_ami_name]
   }
 
-  owners = ["aws-marketplace"]
+  owners = ["amazon"]
 }
