@@ -16,3 +16,7 @@ variable "aws_secret_key" {
   description = "AWS Secret Key"
   sensitive   = true
 }
+variable "elb_sg" {
+  description = "Load Balancer Security Group"
+  type        = string
+}
