@@ -5,8 +5,8 @@ pipeline {
  }
  // Define environment variables for AWS credentials
  environment {
-  AWS_ACCESS_KEY = credentials('AWSAccessKey')
-  AWS_SECRET_KEY = credentials('AWSSecretKey')
+  TF_VAR_AWSAccessKey = credentials('AWSAccessKey')
+  TF_VAR_AWSSecretKey = credentials('AWSSecretKey')    
  }
  stages {
   stage('Terraform Init') {
