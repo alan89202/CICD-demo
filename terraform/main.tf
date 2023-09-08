@@ -97,3 +97,29 @@ resource "aws_security_group" "vprofile-BACKEND-SG" {
     cidr_blocks = [format("%s/32", jsondecode(data.http.ipinfo.response_body).ip)]
   }
 }
+//Create EC2 Instances
+resource "aws_instance" "db_instance" {
+  ami           = data.aws_ami.centos.id
+  instance_type = var.instance_type
+  key_name      = "vprofile_prod_key"
+  vpc_security_group_ids = [aws_security_group.vprofile-BACKEND-SG.id]
+  tags = {
+    Name = var.instance_name
+    Project = var.project
+  }
+  root_block_device {
+    volume_size = 10
+    volume_type = "gp2"
+  }
+}
+
+data "aws_ami" "centos" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = [var.ami_name]
+  }
+
+  owners = ["aws-marketplace"]
+}
