@@ -1,4 +1,4 @@
-//Create S3 Bucket to save agents and artifacts
+//Create S3 Bucket to save agents and artifacts 
 resource "aws_s3_bucket" "vprofile_bucket" {
   bucket = var.bucket_name
 }
