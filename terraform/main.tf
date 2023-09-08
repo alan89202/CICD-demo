@@ -118,7 +118,7 @@ data "aws_ami" "centos" {
 
   filter {
     name   = "name"
-    values = [var.centos_ami_name]
+    values = ["centos stream 9*"]
   }
 
   owners = ["amazon"]
