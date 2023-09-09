@@ -1,5 +1,5 @@
 def BUCKET_NAME 
-
+def WAR_FILE_NAME = "Build${BUILD_NUMBER}_vprofile-v2.war"
 pipeline {
  agent any
  tools {
@@ -32,10 +32,9 @@ pipeline {
        script {
         sh """
          terraform init
-         terraform plan -var-file=variables.tfvars
-         terraform apply -auto-approve -var-file=variables.tfvars
-        """ 
-        //Save output into variable
+         terraform plan -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}'
+         terraform apply -auto-approve -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}'
+        """
         BUCKET_NAME = sh(returnStdout: true, script: "terraform output bucket_name").trim()
        }
       }
@@ -52,7 +51,7 @@ pipeline {
      // Upload Elastic Agent
      sh "aws s3 cp elastic-apm-agent.jar s3://${BUCKET_NAME}/elastic-apm-agent.jar"
      // Upload .war
-     sh "aws s3 cp vprofile/target/vprofile-v2.war s3://${BUCKET_NAME}/Build${BUILD_NUMBER}_vprofile-v2.war"
+     sh "aws s3 cp vprofile/target/vprofile-v2.war s3://${BUCKET_NAME}/${WAR_FILE_NAME}"
     }
    }
   }
