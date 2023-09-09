@@ -1,9 +1,19 @@
+//Search role
+data "aws_iam_role" "existing_role" {
+  name = "terraform_role"
+}
+resource "aws_iam_instance_profile" "terraform_profile" {
+  name = "terraform_profile"
+  role = data.aws_iam_role.existing_role.name
+}
+
 //Create EC2 Instances
 resource "aws_instance" "db_instance" {
   ami           = data.aws_ami.centos.id
   instance_type = var.instance_type
   key_name      = var.key_pair_name
   vpc_security_group_ids = [aws_security_group.vprofile-BACKEND-SG.id]
+  iam_instance_profile = aws_iam_instance_profile.terraform_profile.name
   tags = {
     Name = var.db_instance_name
     Project = var.project
@@ -26,6 +36,7 @@ resource "aws_instance" "mc_instance" {
   instance_type = var.instance_type
   key_name      = var.key_pair_name
   vpc_security_group_ids = [aws_security_group.vprofile-BACKEND-SG.id]
+  iam_instance_profile = aws_iam_instance_profile.terraform_profile.name
   tags = {
     Name = var.mc_instance_name
     Project = var.project
@@ -48,6 +59,7 @@ resource "aws_instance" "rmq_instance" {
   instance_type = var.instance_type
   key_name      = var.key_pair_name
   vpc_security_group_ids = [aws_security_group.vprofile-BACKEND-SG.id]
+  iam_instance_profile = aws_iam_instance_profile.terraform_profile.name
   tags = {
     Name = var.rmq_instance_name
     Project = var.project
@@ -70,6 +82,7 @@ resource "aws_instance" "app_instance" {
   instance_type = var.instance_type
   key_name      = var.key_pair_name
   vpc_security_group_ids = [aws_security_group.vprofile-BACKEND-SG.id]
+  iam_instance_profile = aws_iam_instance_profile.terraform_profile.name
   tags = {
     Name = var.app_instance_name
     Project = var.project
