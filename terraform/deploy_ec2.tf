@@ -102,11 +102,13 @@ resource "aws_instance" "app_instance" {
   }
   user_data = <<EOF
 #!/bin/bash
-sudo apt install wget -y
+sudo apt update
+sudo apt upgrade -y
+sudo apt install wget awscli -y
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/vprofile/userdata/tomcat_ubuntu.sh -O /tmp/tomcat_ubuntu.sh
 sudo chmod +x /tmp/tomcat_ubuntu.sh
 sudo /tmp/tomcat_ubuntu.sh
-sudo apt install awscli -y
+
 EOF
 }
 
