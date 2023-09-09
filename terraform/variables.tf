@@ -66,3 +66,7 @@ variable "project" {
   description = "application project name"
   type        = string
 }
+variable "war_file_name" {
+  description = "The WAR file name"
+  type        = string
+}
