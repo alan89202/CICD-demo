@@ -27,7 +27,7 @@ data "aws_instance" "vprofile_instances" {
 resource "aws_route53_record" "vprofile_records" {
   count   = length(data.aws_instances.vprofile.ids)
   zone_id = aws_route53_zone.private_zone.zone_id
-  name    = format("%s.vprofile.in", element(data.aws_instance.vprofile_instances.*.tags["Name"], count.index))
+  name = format("%s.vprofile.in", data.aws_instance.vprofile_instances[count.index].tags["Name"])
   type    = "A"
   ttl     = "300"
   records = [element(data.aws_instance.vprofile_instances.*.private_ip, count.index)]
