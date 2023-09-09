@@ -90,7 +90,7 @@ resource "aws_instance" "app_instance" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   key_name      = var.key_pair_name
-  vpc_security_group_ids = [aws_security_group.vprofile-BACKEND-SG.id]
+  vpc_security_group_ids = [aws_security_group.vprofile-APP-SG.id]
   iam_instance_profile = aws_iam_instance_profile.terraform_profile.name
   tags = {
     Name = var.app_instance_name
