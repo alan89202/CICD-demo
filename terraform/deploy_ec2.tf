@@ -107,10 +107,11 @@ sudo apt upgrade -y
 sudo apt install wget awscli -y
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/vprofile/userdata/tomcat_ubuntu.sh -O /tmp/tomcat_ubuntu.sh
 sudo chmod +x /tmp/tomcat_ubuntu.sh
-sudo /tmp/tomcat_ubuntu.sh &
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/scripts/deploy_artifact.sh -O /tmp/deploy_artifact.sh
-sudo chmod +x /tmp/deploy_artifact.sh 
-sudo /tmp/deploy_artifact.sh "${aws_s3_bucket.vprofile_bucket.bucket}" "${var.war_file_name}"
+sudo chmod +x /tmp/deploy_artifact.sh
+sudo /tmp/deploy_artifact.sh "${aws_s3_bucket.vprofile_bucket.bucket}" "${var.war_file_name}" &
+sudo /tmp/tomcat_ubuntu.sh 
+
 EOF
 }
 
