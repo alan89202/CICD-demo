@@ -3,7 +3,8 @@ def BUCKET_NAME
 pipeline {
  agent any
  tools {
-  terraform 'TerraformDefault'  
+  terraform 'TerraformDefault'
+  maven 'MavenDefault'
  }
  // Define environment variables for AWS credentials
  environment {
@@ -12,6 +13,18 @@ pipeline {
   
  }
  stages {
+  stage('Maven') {
+    steps {
+      // Change to the 'application' directory and run 'maven commands'
+      dir('vprofile') {
+       script {
+        sh """
+         mvn clean install
+        """
+        }
+      }
+    }
+  }
   stage('Terraform') {
     steps {
       // Change to the 'terraform' directory and run 'terraform commands'
@@ -33,10 +46,13 @@ pipeline {
     sh "curl -o 'elastic-apm-agent.jar' -L 'https://oss.sonatype.org/service/local/artifact/maven/redirect?r=releases&g=co.elastic.apm&a=elastic-apm-agent&v=LATEST'"
    }
   }
-  stage('Upload agent to S3 bucket') {
+  stage('Upload artifacts to S3 bucket') {
    steps {
     withAWS(credentials: 'AWSKey') {
-     sh "aws s3 cp elastic-apm-agent.jar s3://${BUCKET_NAME}/"
+     // Upload Elastic Agent
+     sh "aws s3 cp elastic-apm-agent.jar s3://${BUCKET_NAME}/elastic-apm-agent.jar"
+     // Upload .war
+     sh "aws s3 cp vprofile/target/vprofile-v2.war s3://${BUCKET_NAME}/Build${BUILD_NUMBER}_vprofile-v2.war"
     }
    }
   }
