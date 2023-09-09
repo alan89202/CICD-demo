@@ -38,8 +38,24 @@ variable "db_instance_name" {
   description = "EC2 instance name used for the DB"
   type        = string
 }
+variable "mc_instance_name" {
+  description = "EC2 instance name used for memcache"
+  type        = string
+}
+variable "rmq_instance_name" {
+  description = "EC2 instance name used for rabbitmq"
+  type        = string
+}
+variable "app_instance_name" {
+  description = "EC2 instance name used for tomcat"
+  type        = string
+}
 variable "centos_ami_name" {
   description = "Centos AMI used"
+  type        = string
+}
+variable "ubuntu_ami_name" {
+  description = "Ubuntu AMI used"
   type        = string
 }
 variable "key_pair_name" {
