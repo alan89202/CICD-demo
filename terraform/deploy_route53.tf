@@ -1,3 +1,7 @@
+data "aws_vpc" "default" {
+  default = true
+}
+
 # Identify application instances
 data "aws_instances" "vprofile" {
   filter {
