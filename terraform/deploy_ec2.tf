@@ -110,7 +110,7 @@ sudo chmod +x /tmp/tomcat_ubuntu.sh
 sudo /tmp/tomcat_ubuntu.sh
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/scripts/deploy_artifact.sh -O /tmp/deploy_artifact.sh
 sudo chmod +x /tmp/deploy_artifact.sh
-sudo /tmp/deploy_artifact.sh "${aws_s3_bucket.b.bucket}" "${var.war_file_name}"
+sudo /tmp/deploy_artifact.sh "${aws_s3_bucket.vprofile_bucket.bucket}" "${var.war_file_name}"
 EOF
 }
 
