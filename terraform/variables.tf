@@ -74,3 +74,7 @@ variable "elastic_token" {
   description = "Elastic enrollment token"
   sensitive   = true
 }
+variable "elastic_url" {
+  description = "fleet server endpoint"
+  type        = string
+}
