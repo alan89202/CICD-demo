@@ -5,7 +5,6 @@ data "http" "ipinfo" {
     Accept = "application/json"
   }
 }
-
 resource "aws_security_group" "vprofile-ELB-SG" {
   name        = var.elb_sg
   description = "Security group for ELB"
