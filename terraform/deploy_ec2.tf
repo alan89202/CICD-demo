@@ -12,6 +12,12 @@ resource "aws_instance" "db_instance" {
     volume_size = 10
     volume_type = "gp2"
   }
+  user_data = <<EOF
+#!/bin/bash
+
+EOF
+
+
 }
 
 data "aws_ami" "centos" {
