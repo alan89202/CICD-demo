@@ -24,10 +24,13 @@ resource "aws_instance" "db_instance" {
   }
   user_data = <<EOF
 #!/bin/bash
-sudo yum install wget -y
+sudo yum install wget unzip -y
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/vprofile/userdata/mysql.sh -O /tmp/mysql.sh
 sudo chmod +x /tmp/mysql.sh
 sudo /tmp/mysql.sh
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+sudo unzip awscliv2.zip
+sudo ./aws/install
 EOF
 }
 
@@ -47,10 +50,13 @@ resource "aws_instance" "mc_instance" {
   }
   user_data = <<EOF
 #!/bin/bash
-sudo yum install wget -y
+sudo yum install wget unzip -y
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/vprofile/userdata/memcache.sh -O /tmp/memcache.sh
 sudo chmod +x /tmp/memcache.sh
 sudo /tmp/memcache.sh
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+sudo unzip awscliv2.zip
+sudo ./aws/install
 EOF
 }
 
@@ -70,10 +76,13 @@ resource "aws_instance" "rmq_instance" {
   }
   user_data = <<EOF
 #!/bin/bash
-sudo yum install wget -y
+sudo yum install wget unzip -y
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/vprofile/userdata/rabbitmq.sh -O /tmp/rabbitmq.sh
 sudo chmod +x /tmp/rabbitmq.sh
 sudo /tmp/rabbitmq.sh
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+sudo unzip awscliv2.zip
+sudo ./aws/install
 EOF
 }
 
@@ -93,10 +102,11 @@ resource "aws_instance" "app_instance" {
   }
   user_data = <<EOF
 #!/bin/bash
-sudo yum install wget -y
+sudo apt install wget -y
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/vprofile/userdata/tomcat_ubuntu.sh -O /tmp/tomcat_ubuntu.sh
 sudo chmod +x /tmp/tomcat_ubuntu.sh
 sudo /tmp/tomcat_ubuntu.sh
+sudo apt install awscli -y
 EOF
 }
 
