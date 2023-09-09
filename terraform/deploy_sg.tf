@@ -21,6 +21,12 @@ resource "aws_security_group" "vprofile-ELB-SG" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]  
   }
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]  
+  }
 }
 resource "aws_security_group" "vprofile-APP-SG" {
   name        = var.app_sg
@@ -42,6 +48,12 @@ resource "aws_security_group" "vprofile-APP-SG" {
     to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = [format("%s/32", jsondecode(data.http.ipinfo.response_body).ip)]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]  
   }
 }
 resource "aws_security_group" "vprofile-BACKEND-SG" {
@@ -76,5 +88,11 @@ resource "aws_security_group" "vprofile-BACKEND-SG" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = [format("%s/32", jsondecode(data.http.ipinfo.response_body).ip)]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]  
   }
 }
