@@ -11,13 +11,10 @@ data "aws_instances" "vprofile" {
 }
 
 # Create zone
-module "private_hosted_zone" {
-  source      = "../../"
-  domain      = "vprofile.in"
-  description = "application private zone"
-  private_zone = {
-    vpc_id     = data.aws_vpc.default.id
-    vpc_region = var.aws_region
+resource "aws_route53_zone" "private_zone" {
+  name         = "vprofile.in"
+  vpc {
+    vpc_id = data.aws_vpc.default.id
   }
 }
 
