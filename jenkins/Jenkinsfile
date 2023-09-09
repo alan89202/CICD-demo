@@ -6,11 +6,11 @@ pipeline {
   terraform 'TerraformDefault'
   maven 'MavenDefault'
  }
- // Define environment variables for AWS credentials
+ // Define environment variables for credentials
  environment {
   TF_VAR_aws_access_key = credentials('AWSAccessKey')
   TF_VAR_aws_secret_key = credentials('AWSSecretKey')
-  
+  TF_VAR_elastic_token = credentials('Elastic_token')
  }
  stages {
   stage('Maven') {
