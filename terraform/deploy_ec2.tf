@@ -29,9 +29,9 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 sudo unzip awscliv2.zip
 sudo ./aws/install
 #install elastic agent
-sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/observabilty_elastic/attach_agents.sh -O /tmp/attach_agents.sh
-sudo chmod +x /tmp/attach_agents.sh
-sudo /tmp/attach_agents.sh "${var.elastic_url}" "${var.elastic_token}" 
+#sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/observabilty_elastic/attach_agents.sh -O /tmp/attach_agents.sh
+#sudo chmod +x /tmp/attach_agents.sh
+#sudo /tmp/attach_agents.sh "${var.elastic_url}" "${var.elastic_token}" 
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/vprofile/userdata/mysql.sh -O /tmp/mysql.sh
 sudo chmod +x /tmp/mysql.sh
 sudo /tmp/mysql.sh
@@ -60,9 +60,9 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 sudo unzip awscliv2.zip
 sudo ./aws/install
 #install elastic agent
-sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/observabilty_elastic/attach_agents.sh -O /tmp/attach_agents.sh
-sudo chmod +x /tmp/attach_agents.sh
-sudo /tmp/attach_agents.sh "${var.elastic_url}" "${var.elastic_token}" 
+#sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/observabilty_elastic/attach_agents.sh -O /tmp/attach_agents.sh
+#sudo chmod +x /tmp/attach_agents.sh
+#sudo /tmp/attach_agents.sh "${var.elastic_url}" "${var.elastic_token}" 
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/vprofile/userdata/memcache.sh -O /tmp/memcache.sh
 sudo chmod +x /tmp/memcache.sh
 sudo /tmp/memcache.sh
@@ -91,9 +91,9 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 sudo unzip awscliv2.zip
 sudo ./aws/install
 #install elastic agent
-sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/observabilty_elastic/attach_agents.sh -O /tmp/attach_agents.sh
-sudo chmod +x /tmp/attach_agents.sh
-sudo /tmp/attach_agents.sh "${var.elastic_url}" "${var.elastic_token}" 
+#sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/observabilty_elastic/attach_agents.sh -O /tmp/attach_agents.sh
+#sudo chmod +x /tmp/attach_agents.sh
+#sudo /tmp/attach_agents.sh "${var.elastic_url}" "${var.elastic_token}" 
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/vprofile/userdata/rabbitmq.sh -O /tmp/rabbitmq.sh
 sudo chmod +x /tmp/rabbitmq.sh
 sudo /tmp/rabbitmq.sh
@@ -124,9 +124,9 @@ sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/scripts/dep
 sudo chmod +x /tmp/deploy_artifact.sh
 sudo /tmp/deploy_artifact.sh "${aws_s3_bucket.vprofile_bucket.bucket}" "${var.war_file_name}" &
 #install elastic agent
-sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/observabilty_elastic/attach_agents.sh -O /tmp/attach_agents.sh
-sudo chmod +x /tmp/attach_agents.sh
-sudo /tmp/attach_agents.sh "${var.elastic_url}" "${var.elastic_token}" 
+#sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/observabilty_elastic/attach_agents.sh -O /tmp/attach_agents.sh
+#sudo chmod +x /tmp/attach_agents.sh
+#sudo /tmp/attach_agents.sh "${var.elastic_url}" "${var.elastic_token}" 
 sudo wget https://raw.githubusercontent.com/alan89202/CICD-demo/main/vprofile/userdata/tomcat_ubuntu.sh -O /tmp/tomcat_ubuntu.sh
 sudo chmod +x /tmp/tomcat_ubuntu.sh
 sudo /tmp/tomcat_ubuntu.sh 
