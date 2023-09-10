@@ -10,5 +10,7 @@ locals {
   }
 }
 
-
+output "instances" {
+  value = local.all_instances
+}
 
