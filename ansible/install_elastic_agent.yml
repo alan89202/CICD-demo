@@ -1,0 +1,21 @@
+---
+- name: Install Elastic Agent on EC2 instances
+  hosts: all
+  become: yes
+  tasks:
+    - name: Download Elastic Agent
+      get_url:
+        url: "https://artifacts.elastic.co/downloads/beats/elastic-agent/elastic-agent-8.9.2-linux-x86_64.tar.gz"
+        dest: "/tmp/elastic-agent-8.9.2-linux-x86_64.tar.gz"
+
+    - name: Extract Elastic Agent
+      unarchive:
+        src: "/tmp/elastic-agent-8.9.2-linux-x86_64.tar.gz"
+        dest: "/tmp"
+        remote_src: yes
+
+    - name: Install Elastic Agent
+      command:
+        cmd: "./elastic-agent install --url={{ elastic_url }} --enrollment-token={{ enrollment_token }}"
+        chdir: "/tmp/elastic-agent-8.9.2-linux-x86_64"
+
