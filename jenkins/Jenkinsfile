@@ -73,7 +73,8 @@ pipeline {
      script {
       def jsonOutput = sh(returnStdout: true, script: 'terraform output -json').trim()
       def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
-      echo "Aqui estoy"
+      echo "Aqui estoy con la variable ${jsonOutput}"
+      echo "Aqui estoy con la otra variable ${ALL_INSTANCES}"
      }
     }
    }
