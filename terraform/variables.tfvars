@@ -10,6 +10,6 @@ rmq_instance_name = "vprofile-rmq01"
 app_instance_name = "vprofile-app01"
 centos_ami_name = "CentOS-Stream-*9*"
 ubuntu_ami_name = "*ubuntu-jammy-22*"
-key_pair_name = "vprofile_prod_key"
+key_pair_name = "vprofile_testing_key"
 project = "vprofile"
 
