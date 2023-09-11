@@ -72,13 +72,15 @@ pipeline {
     dir('ansible') {
      script {
       def jsonOutput = sh(returnStdout: true, script: 'terraform output -json').trim()
+      echo "Salida de Terraform: ${jsonOutput}"
+
       def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
-      echo "Aqui estoy con la variable ${jsonOutput}"
-      echo "Aqui estoy con la otra variable ${ALL_INSTANCES}"
+      echo "Variable ALL_INSTANCES: ${ALL_INSTANCES}"
      }
     }
    }
-  }
+}
+
  }    
 }
 
