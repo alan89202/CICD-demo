@@ -68,16 +68,17 @@ pipeline {
    }
   }
   stage('Install Elastic Agent using Ansible') {
-  steps {
-   dir('ansible') {
-    script {
-     def jsonOutput = sh(returnStdout: true, script: 'terraform output -json').trim()
-     def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
-     echo "Aqui estoy"
+   steps {
+    dir('ansible') {
+     script {
+      def jsonOutput = sh(returnStdout: true, script: 'terraform output -json').trim()
+      def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
+      echo "Aqui estoy"
+     }
     }
    }
   }
- }
+ }    
 }
 
 
