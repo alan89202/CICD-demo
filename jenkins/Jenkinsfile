@@ -91,7 +91,7 @@ pipeline {
                     def CREDENTIAL_ID = (details.os == 'Ubuntu' ? 'EC2Keyubuntu' : 'EC2Keycentos')
                     withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_token', variable: 'ENROLLMENT_TOKEN')]) {
                         sh """
-                        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --syntax-check -i ansible_inventory.ini install_elastic_agent.yml \
+                        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini install_elastic_agent.yml \
                         -vvv -e "elastic_url=$ELASTIC_URL" -e "enrollment_token=$ENROLLMENT_TOKEN" --private-key=$SSH_KEY
                         """
                     }
