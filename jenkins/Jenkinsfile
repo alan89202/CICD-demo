@@ -74,10 +74,19 @@ pipeline {
     dir('ansible') {
      script {
       def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
-      ALL_INSTANCES.each { ip, os ->
-       def inventoryContent = ip
-       writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
-       sh 'cat ansible_inventory.ini'
+      def ubuntuContent = "[ubuntu]\n"
+      def centosContent = "[centos]\n"
+
+      ALL_INSTANCES.each { _, details ->
+       if(details.os == 'Ubuntu') {
+        ubuntuContent += details.public_ip + '\n'
+       } else if(details.os == 'Centos') {
+        centosContent += details.public_ip + '\n'
+       }
+      }
+
+      def inventoryContent = ubuntuContent + '\n' + centosContent
+      writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
 
        def CREDENTIAL_ID = (os == 'ubuntu' ? 'EC2Keyubuntu' : 'EC2Keycentos')
        withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY')]) {
