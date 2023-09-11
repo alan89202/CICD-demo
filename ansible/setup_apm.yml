@@ -1,6 +1,14 @@
 - name: Setup Elastic APM Java Agent for Tomcat
   hosts: all
   tasks:
+    - name: Wait for Tomcat to be running
+      command: systemctl is-active tomcat9
+      register: result
+      until: result.stdout == "active"
+      retries: 20
+      delay: 15
+      ignore_errors: yes
+
     - name: Download APM agent from S3
       aws_s3:
         bucket: "{{ bucket_name }}"
@@ -18,7 +26,8 @@
           export CATALINA_OPTS="$CATALINA_OPTS -Delastic.apm.server_url={{ ELASTIC_APM_URL }}"
           export CATALINA_OPTS="$CATALINA_OPTS -Delastic.apm.secret_token={{ Elastic_apm_token }}"
         mode: 0755
+
     - name: Restart Tomcat
       service:
         name: tomcat9
-        state: restarted    
+        state: restarted
