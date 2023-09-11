@@ -44,12 +44,21 @@ pipeline {
          terraform plan -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}' 
          terraform apply -auto-approve -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}' 
         """
+       }
+      }
+    }
+  }
+  stage('Obtain outputs') {
+    steps {
+      // Change to the 'terraform' directory and run 'terraform commands'
+      dir('terraform') {
+       script {
         BUCKET_NAME = sh(returnStdout: true, script: "terraform output bucket_name").trim()
         jsonOutput = sh(returnStdout: true, script: 'terraform output -json').trim()
        }
       }
     }
-  }
+  }   
   stage('Download Elastic APM Agent') {
    steps {
     sh "curl -o 'elastic-apm-agent.jar' -L 'https://oss.sonatype.org/service/local/artifact/maven/redirect?r=releases&g=co.elastic.apm&a=elastic-apm-agent&v=LATEST'"
