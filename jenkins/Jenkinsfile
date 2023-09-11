@@ -73,16 +73,24 @@ pipeline {
    steps {
     dir('ansible') {
      script {
-      
-      echo "Salida de Terraform: ${jsonOutput}"
-
       def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
-      echo "Variable ALL_INSTANCES: ${ALL_INSTANCES}"
+      ALL_INSTANCES.each { ip, os ->
+       def inventoryContent = ip
+       writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
+       sh 'cat ansible_inventory.ini'
+
+       def CREDENTIAL_ID = (os == 'ubuntu' ? 'EC2Keyubuntu' : 'EC2Keycentos')
+       withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY')]) {
+       sh '''
+        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini install_elastic_agent.yml \
+        -vvv -e "elastic_url=${ELASTIC_URL}" -e "enrollment_token=${ENROLLMENT_TOKEN}" --private-key=${SSH_KEY}
+       '''
+       }
+      }
      }
     }
    }
-}
-
+  }
  }    
 }
 
