@@ -83,6 +83,8 @@ pipeline {
 
                 def inventoryContent = ubuntuContent + '\n' + centosContent
                 writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
+                echo "ALL_INSTANCES: ${ALL_INSTANCES}"
+                echo "Inventory Content: ${inventoryContent}"
 
                 ALL_INSTANCES.each { instanceName, details ->
                     def CREDENTIAL_ID = (details.os == 'Ubuntu' ? 'EC2Keyubuntu' : 'EC2Keycentos')
