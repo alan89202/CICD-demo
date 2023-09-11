@@ -70,11 +70,4 @@ variable "war_file_name" {
   description = "The WAR file name"
   type        = string
 }
-variable "elastic_token" {
-  description = "Elastic enrollment token"
-  sensitive   = true
-}
-variable "elastic_url" {
-  description = "fleet server endpoint"
-  type        = string
-}
+
