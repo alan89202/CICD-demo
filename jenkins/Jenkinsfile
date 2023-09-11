@@ -75,9 +75,11 @@ pipeline {
      def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
             
      ALL_INSTANCES.each { ip, os ->
-      def inventoryContent = ip
-      writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
-      sh "cat ansible_inventory.ini"       
+     def inventoryContent = ip
+     writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
+     sh 'echo "Inventory File Location: ${WORKSPACE}/ansible_inventory.ini"'
+
+       
       def CREDENTIAL_ID = (os == "ubuntu" ? "EC2Keyubuntu" : "EC2Keycentos")
       withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY')]) {
        sh """
