@@ -1,0 +1,20 @@
+- name: Setup Elastic APM Java Agent for Tomcat
+  hosts: all
+  tasks:
+    - name: Download APM agent from S3
+      aws_s3:
+        bucket: "{{ bucket_name }}"
+        object: "/{{ agent_file_name }}"
+        dest: "/usr/share/tomcat9/bin/{{ agent_file_name }}"
+        mode: get
+
+    - name: Create setenv.sh
+      copy:
+        dest: /usr/share/tomcat9/bin/setenv.sh
+        content: |
+          export CATALINA_OPTS="$CATALINA_OPTS -javaagent:/usr/share/tomcat9/bin/{{ agent_file_name }}"
+          export CATALINA_OPTS="$CATALINA_OPTS -Delastic.apm.service_name={{ service_name }}"
+          export CATALINA_OPTS="$CATALINA_OPTS -Delastic.apm.application_packages=org.example,org.another.example"
+          export CATALINA_OPTS="$CATALINA_OPTS -Delastic.apm.server_url={{ ELASTIC_APM_URL }}"
+          export CATALINA_OPTS="$CATALINA_OPTS -Delastic.apm.secret_token={{ Elastic_apm_token }}"
+        mode: 0755
