@@ -23,9 +23,7 @@ resource "aws_instance" "db_instance" {
     volume_size = 10
     volume_type = "gp2"
   }
-  provisioner "remote-exec" {
-    inline = ["sudo hostnamectl set-hostname ${var.db_instance_name}"]
-  }
+  
   user_data = <<EOF
 #!/bin/bash
 sudo yum install tar wget unzip -y
@@ -54,9 +52,7 @@ resource "aws_instance" "mc_instance" {
     volume_size = 10
     volume_type = "gp2"
   }
-  provisioner "remote-exec" {
-    inline = ["sudo hostnamectl set-hostname ${var.mc_instance_name}"]
-  }
+  
   user_data = <<EOF
 #!/bin/bash
 sudo yum install tar wget unzip -y
@@ -85,9 +81,7 @@ resource "aws_instance" "rmq_instance" {
     volume_size = 10
     volume_type = "gp2"
   }
-  provisioner "remote-exec" {
-    inline = ["sudo hostnamectl set-hostname ${var.rmq_instance_name}"]
-  }
+  
   user_data = <<EOF
 #!/bin/bash
 sudo yum install tar wget unzip -y
@@ -116,9 +110,7 @@ resource "aws_instance" "app_instance" {
     volume_size = 10
     volume_type = "gp2"
   }
-  provisioner "remote-exec" {
-    inline = ["sudo hostnamectl set-hostname ${var.app_instance_name}"]
-  }
+  
   user_data = <<EOF
 #!/bin/bash
 sudo apt update
