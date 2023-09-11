@@ -24,7 +24,7 @@
 
     - name: Install Elastic Agent
       command:
-        cmd: "./elastic-agent install --url={{ elastic_url }} --enrollment-token={{ enrollment_token }}"
+        cmd: "./elastic-agent install -n --url={{ elastic_url }} --enrollment-token={{ enrollment_token }}"
         chdir: "/tmp/elastic-agent-8.9.2-linux-x86_64"
       when: elastic_agent_check.rc != 0
 
