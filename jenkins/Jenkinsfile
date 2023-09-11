@@ -42,7 +42,8 @@ pipeline {
         sh """
          terraform init
          terraform plan -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}' 
-         terraform apply -auto-approve -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}' 
+         terraform apply -auto-approve -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}'
+         terraform refresh
         """
        }
       }
