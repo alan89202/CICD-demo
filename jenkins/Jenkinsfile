@@ -71,7 +71,7 @@ pipeline {
    steps {
     dir('ansible') {
      script {
-      def jsonOutput = sh(returnStdout: true, script: 'terraform output instances -json').trim()
+      def jsonOutput = sh(returnStdout: true, script: 'terraform output instances').trim()
       echo "Salida de Terraform: ${jsonOutput}"
 
       def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
