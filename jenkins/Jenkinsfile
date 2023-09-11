@@ -83,9 +83,7 @@ pipeline {
        } else if(details.os == 'Centos') {
         centosContent += details.public_ip + '\n'
        }
-      }
-
-      def inventoryContent = ubuntuContent + '\n' + centosContent
+       def inventoryContent = ubuntuContent + '\n' + centosContent
       writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
 
        def CREDENTIAL_ID = (os == 'ubuntu' ? 'EC2Keyubuntu' : 'EC2Keycentos')
@@ -93,14 +91,16 @@ pipeline {
        sh '''
         ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --syntax-check -i ansible_inventory.ini install_elastic_agent.yml \
         -vvv -e "elastic_url=${ELASTIC_URL}" -e "enrollment_token=${ENROLLMENT_TOKEN}" --private-key=${SSH_KEY}
-       '''
+       '''   
+       }
+
+      
        }
       }
      }
     }
    }
   }
- }    
 }
 
 
