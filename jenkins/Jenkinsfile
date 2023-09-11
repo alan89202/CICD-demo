@@ -48,6 +48,7 @@ pipeline {
          terraform apply -auto-approve -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}' 
         """
         BUCKET_NAME = sh(returnStdout: true, script: "terraform output bucket_name").trim()
+        def jsonOutput = sh(returnStdout: true, script: 'terraform output instances').trim()
        }
       }
     }
@@ -71,7 +72,7 @@ pipeline {
    steps {
     dir('ansible') {
      script {
-      def jsonOutput = sh(returnStdout: true, script: 'terraform output instances').trim()
+      
       echo "Salida de Terraform: ${jsonOutput}"
 
       def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
