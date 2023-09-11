@@ -12,9 +12,13 @@
       copy:
         dest: /usr/share/tomcat9/bin/setenv.sh
         content: |
-          export CATALINA_OPTS="$CATALINA_OPTS -javaagent:/usr/share/tomcat9/bin/{{ agent_file_name }}"
+          export CATALINA_OPTS="$CATALINA_OPTS -javaagent:/usr/share/tomcat9/bin/elastic-apm-agent.jar"
           export CATALINA_OPTS="$CATALINA_OPTS -Delastic.apm.service_name={{ service_name }}"
-          export CATALINA_OPTS="$CATALINA_OPTS -Delastic.apm.application_packages=org.example,org.another.example"
+          export CATALINA_OPTS="$CATALINA_OPTS -Delastic.apm.application_packages=com.visualpathit"
           export CATALINA_OPTS="$CATALINA_OPTS -Delastic.apm.server_url={{ ELASTIC_APM_URL }}"
           export CATALINA_OPTS="$CATALINA_OPTS -Delastic.apm.secret_token={{ Elastic_apm_token }}"
         mode: 0755
+    - name: Restart Tomcat
+      service:
+        name: tomcat9
+        state: restarted    
