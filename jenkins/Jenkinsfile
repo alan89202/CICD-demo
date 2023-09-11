@@ -73,7 +73,7 @@ pipeline {
                 def ubuntuContent = "[ubuntu]\n"
                 def centosContent = "[centos]\n"
 
-                ALL_INSTANCES.each { instanceName, details ->
+                ALL_INSTANCES.instances.value.each { instanceName, details ->
                     if(details.os == 'Ubuntu') {
                         ubuntuContent += details.public_ip + '\n'
                     } else if(details.os == 'Centos') {
@@ -83,15 +83,16 @@ pipeline {
 
                 def inventoryContent = ubuntuContent + '\n' + centosContent
                 writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
+
                 echo "ALL_INSTANCES: ${ALL_INSTANCES}"
                 echo "Inventory Content: ${inventoryContent}"
 
-                ALL_INSTANCES.each { instanceName, details ->
+                ALL_INSTANCES.instances.value.each { instanceName, details ->
                     def CREDENTIAL_ID = (details.os == 'Ubuntu' ? 'EC2Keyubuntu' : 'EC2Keycentos')
                     withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_token', variable: 'ENROLLMENT_TOKEN')]) {
                         sh """
                         ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --syntax-check -i ansible_inventory.ini install_elastic_agent.yml \
-                        -vvv -e "elastic_url=${ELASTIC_URL}" -e "enrollment_token=${ENROLLMENT_TOKEN}" --private-key=${SSH_KEY}
+                        -vvv -e "elastic_url=$ELASTIC_URL" -e "enrollment_token=$ENROLLMENT_TOKEN" --private-key=$SSH_KEY
                         """
                     }
                 }
@@ -99,6 +100,7 @@ pipeline {
         }
     }
 }
+
 
 
 
