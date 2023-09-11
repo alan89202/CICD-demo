@@ -1,4 +1,4 @@
-bucket_name = "vprofile-al-ops"
+bucket_name = "vprofile-al-observability"
 aws_region = "us-east-2"
 elb_sg = "vprofile-ELB-SG"
 app_sg = "vprofile-APP-SG"
