@@ -23,9 +23,11 @@ resource "aws_instance" "db_instance" {
     volume_size = 10
     volume_type = "gp2"
   }
+  provisioner "remote-exec" {
+    inline = ["sudo hostnamectl set-hostname ${var.db_instance_name}"]
+  }
   user_data = <<EOF
 #!/bin/bash
-hostnamectl set-hostname ${var.db_instance_name}
 sudo yum install tar wget unzip -y
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo unzip awscliv2.zip
@@ -52,9 +54,11 @@ resource "aws_instance" "mc_instance" {
     volume_size = 10
     volume_type = "gp2"
   }
+  provisioner "remote-exec" {
+    inline = ["sudo hostnamectl set-hostname ${var.mc_instance_name}"]
+  }
   user_data = <<EOF
 #!/bin/bash
-hostnamectl set-hostname ${var.mc_instance_name}
 sudo yum install tar wget unzip -y
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo unzip awscliv2.zip
@@ -81,9 +85,11 @@ resource "aws_instance" "rmq_instance" {
     volume_size = 10
     volume_type = "gp2"
   }
+  provisioner "remote-exec" {
+    inline = ["sudo hostnamectl set-hostname ${var.rmq_instance_name}"]
+  }
   user_data = <<EOF
 #!/bin/bash
-hostnamectl set-hostname ${var.rmq_instance_name}
 sudo yum install tar wget unzip -y
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo unzip awscliv2.zip
@@ -110,9 +116,11 @@ resource "aws_instance" "app_instance" {
     volume_size = 10
     volume_type = "gp2"
   }
+  provisioner "remote-exec" {
+    inline = ["sudo hostnamectl set-hostname ${var.app_instance_name"]
+  }
   user_data = <<EOF
 #!/bin/bash
-hostnamectl set-hostname ${var.app_instance_name}
 sudo apt update
 sudo apt upgrade -y
 sudo apt install tar wget awscli -y
