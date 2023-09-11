@@ -17,6 +17,7 @@ resource "aws_instance" "db_instance" {
   tags = {
     Name = var.db_instance_name
     Project = var.project
+    OS   = "Centos"
   }
   root_block_device {
     volume_size = 10
@@ -48,6 +49,7 @@ resource "aws_instance" "mc_instance" {
   tags = {
     Name = var.mc_instance_name
     Project = var.project
+    OS   = "Centos"
   }
   root_block_device {
     volume_size = 10
@@ -79,6 +81,7 @@ resource "aws_instance" "rmq_instance" {
   tags = {
     Name = var.rmq_instance_name
     Project = var.project
+    OS   = "Centos"
   }
   root_block_device {
     volume_size = 10
@@ -110,6 +113,7 @@ resource "aws_instance" "app_instance" {
   tags = {
     Name = var.app_instance_name
     Project = var.project
+    OS   = "Ubuntu"
   }
   root_block_device {
     volume_size = 10
