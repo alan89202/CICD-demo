@@ -1,4 +1,5 @@
 def BUCKET_NAME 
+def jsonOutput
 def WAR_FILE_NAME = "Build${BUILD_NUMBER}_vprofile-v2.war"
 def ELASTIC_URL = "https://d22cd37ad51c47e68788401782fe7a0d.fleet.us-east-1.aws.found.io:443"
 def extractIpsFromTerraformOutput(jsonString) {
@@ -48,7 +49,7 @@ pipeline {
          terraform apply -auto-approve -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}' 
         """
         BUCKET_NAME = sh(returnStdout: true, script: "terraform output bucket_name").trim()
-        def jsonOutput = sh(returnStdout: true, script: 'terraform output instances').trim()
+        jsonOutput = sh(returnStdout: true, script: 'terraform output -json').trim()
        }
       }
     }
