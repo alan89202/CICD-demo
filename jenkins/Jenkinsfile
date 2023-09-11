@@ -82,7 +82,7 @@ pipeline {
       withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY')]) {
        sh """
         cd ../ansible
-        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini install_elastic_agent.yml -e "elastic_url=${ELASTIC_URL}" -e "enrollment_token=${ENROLLMENT_TOKEN}" --private-key=${SSH_KEY}
+        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini install_elastic_agent.yml -vvv -e "elastic_url=${ELASTIC_URL}" -e "enrollment_token=${ENROLLMENT_TOKEN}" --private-key=${SSH_KEY}
        """
       }
      }
