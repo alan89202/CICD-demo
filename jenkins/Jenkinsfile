@@ -75,9 +75,9 @@ pipeline {
 
                 ALL_INSTANCES.instances.value.each { instanceName, details ->
                     if(details.os == 'Ubuntu') {
-                        ubuntuContent += details.public_ip + '\n'
+                        ubuntuContent += "${details.public_ip} ansible_ssh_user=ubuntu\n"
                     } else if(details.os == 'Centos') {
-                        centosContent += details.public_ip + '\n'
+                        centosContent += "${details.public_ip} ansible_ssh_user=ec2-user\n"
                     }
                 }
 
@@ -87,12 +87,22 @@ pipeline {
                 echo "ALL_INSTANCES: ${ALL_INSTANCES}"
                 echo "Inventory Content: ${inventoryContent}"
 
-                ALL_INSTANCES.instances.value.each { instanceName, details ->
-                    def CREDENTIAL_ID = (details.os == 'Ubuntu' ? 'EC2Keyubuntu' : 'EC2Keycentos')
-                    withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_token', variable: 'ENROLLMENT_TOKEN')]) {
+                // Ejecuta Ansible para el grupo Ubuntu
+                if (ubuntuContent.trim() != "[ubuntu]") {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'EC2Keyubuntu', keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_token', variable: 'ENROLLMENT_TOKEN')]) {
                         sh """
                         ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini install_elastic_agent.yml \
-                        -vvv -e "elastic_url=$ELASTIC_URL" -e "enrollment_token=$ENROLLMENT_TOKEN" --private-key=$SSH_KEY
+                        -vvv -e "elastic_url=$ELASTIC_URL" -e "enrollment_token=$ENROLLMENT_TOKEN" --private-key=$SSH_KEY --limit=ubuntu
+                        """
+                    }
+                }
+
+                // Ejecuta Ansible para el grupo CentOS
+                if (centosContent.trim() != "[centos]") {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'EC2Keycentos', keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_token', variable: 'ENROLLMENT_TOKEN')]) {
+                        sh """
+                        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini install_elastic_agent.yml \
+                        -vvv -e "elastic_url=$ELASTIC_URL" -e "enrollment_token=$ENROLLMENT_TOKEN" --private-key=$SSH_KEY --limit=centos
                         """
                     }
                 }
@@ -100,6 +110,7 @@ pipeline {
         }
     }
 }
+
 
 
 
