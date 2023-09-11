@@ -25,6 +25,9 @@ resource "aws_instance" "db_instance" {
   }
   user_data = <<EOF
 #!/bin/bash
+INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+INSTANCE_NAME=$(aws ec2 describe-tags --region ${var.aws_region} --filters "Name=resource-id,Values=$INSTANCE_ID" "Name=key,Values=Name" --output text | cut -f5)
+hostnamectl set-hostname $INSTANCE_NAME
 sudo yum install tar wget unzip -y
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo unzip awscliv2.zip
@@ -53,6 +56,9 @@ resource "aws_instance" "mc_instance" {
   }
   user_data = <<EOF
 #!/bin/bash
+INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+INSTANCE_NAME=$(aws ec2 describe-tags --region ${var.aws_region} --filters "Name=resource-id,Values=$INSTANCE_ID" "Name=key,Values=Name" --output text | cut -f5)
+hostnamectl set-hostname $INSTANCE_NAME
 sudo yum install tar wget unzip -y
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo unzip awscliv2.zip
@@ -81,6 +87,9 @@ resource "aws_instance" "rmq_instance" {
   }
   user_data = <<EOF
 #!/bin/bash
+INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+INSTANCE_NAME=$(aws ec2 describe-tags --region ${var.aws_region} --filters "Name=resource-id,Values=$INSTANCE_ID" "Name=key,Values=Name" --output text | cut -f5)
+hostnamectl set-hostname $INSTANCE_NAME
 sudo yum install tar wget unzip -y
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo unzip awscliv2.zip
@@ -109,6 +118,9 @@ resource "aws_instance" "app_instance" {
   }
   user_data = <<EOF
 #!/bin/bash
+INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+INSTANCE_NAME=$(aws ec2 describe-tags --region ${var.aws_region} --filters "Name=resource-id,Values=$INSTANCE_ID" "Name=key,Values=Name" --output text | cut -f5)
+hostnamectl set-hostname $INSTANCE_NAME
 sudo apt update
 sudo apt upgrade -y
 sudo apt install tar wget awscli -y
