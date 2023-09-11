@@ -82,6 +82,7 @@ pipeline {
        def CREDENTIAL_ID = (os == 'ubuntu' ? 'EC2Keyubuntu' : 'EC2Keycentos')
        withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY')]) {
        sh '''
+        pwd
         ls -la
        '''
        }
