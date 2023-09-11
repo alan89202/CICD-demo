@@ -117,7 +117,7 @@ resource "aws_instance" "app_instance" {
     volume_type = "gp2"
   }
   provisioner "remote-exec" {
-    inline = ["sudo hostnamectl set-hostname ${var.app_instance_name"]
+    inline = ["sudo hostnamectl set-hostname ${var.app_instance_name}"]
   }
   user_data = <<EOF
 #!/bin/bash
