@@ -2,131 +2,145 @@ def BUCKET_NAME
 def jsonOutput
 def WAR_FILE_NAME = "Build${BUILD_NUMBER}_vprofile-v2.war"
 def ELASTIC_URL = "https://d22cd37ad51c47e68788401782fe7a0d.fleet.us-east-1.aws.found.io:443"
+def ELASTIC_APM_URL = "https://observability-demo.apm.us-east-1.aws.found.io"
+def SERVICE_NAME = WAR_FILE_NAME.minus(".war").split("_")[1]
+
 def extractIpsFromTerraformOutput(jsonString) {
     def parsedData = readJSON text: jsonString
     return parsedData
 }
 
-
 pipeline {
- agent any
- tools {
-  terraform 'TerraformDefault'
-  maven 'MavenDefault'
-  ansible 'AnsibleDefault'   
- }
- // Define environment variables for credentials
- environment {
-  TF_VAR_aws_access_key = credentials('AWSAccessKey')
-  TF_VAR_aws_secret_key = credentials('AWSSecretKey')
-  //TF_VAR_elastic_token = credentials('Elastic_token')
- }
- stages {
-  stage('Maven') {
-    steps {
-      // Change to the 'application' directory and run 'maven commands'
-      dir('vprofile') {
-       script {
-        sh """
-         mvn clean install
-        """
+    agent any
+    tools {
+        terraform 'TerraformDefault'
+        maven 'MavenDefault'
+        ansible 'AnsibleDefault'   
+    }
+    
+    environment {
+        TF_VAR_aws_access_key = credentials('AWSAccessKey')
+        TF_VAR_aws_secret_key = credentials('AWSSecretKey')
+    }
+    
+    stages {
+        stage('Maven') {
+            steps {
+                dir('vprofile') {
+                    script {
+                        sh """
+                        mvn clean install
+                        """
+                    }
+                }
+            }
         }
-      }
-    }
-  }
-  stage('Terraform') {
-    steps {
-      // Change to the 'terraform' directory and run 'terraform commands'
-      dir('terraform') {
-       script {
-        sh """
-         terraform init
-         terraform plan -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}' 
-         terraform apply -auto-approve -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}'
-         terraform refresh -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}' 
-        """
-       }
-      }
-    }
-  }
-  stage('Obtain outputs') {
-    steps {
-      // Change to the 'terraform' directory and run 'terraform commands'
-      dir('terraform') {
-       script {
-        BUCKET_NAME = sh(returnStdout: true, script: "terraform output bucket_name").trim()
-        jsonOutput = sh(returnStdout: true, script: 'terraform output -json').trim()
-       }
-      }
-    }
-  }   
-  stage('Download Elastic APM Agent') {
-   steps {
-    sh "curl -o 'elastic-apm-agent.jar' -L 'https://oss.sonatype.org/service/local/artifact/maven/redirect?r=releases&g=co.elastic.apm&a=elastic-apm-agent&v=LATEST'"
-   }
-  }
-  stage('Upload artifacts to S3 bucket') {
-   steps {
-    withAWS(credentials: 'AWSKey') {
-     // Upload Elastic Agent
-     sh "aws s3 cp elastic-apm-agent.jar s3://${BUCKET_NAME}/elastic-apm-agent.jar"
-     // Upload .war
-     sh "aws s3 cp vprofile/target/vprofile-v2.war s3://${BUCKET_NAME}/${WAR_FILE_NAME}"
-    }
-   }
-  }
-  stage('Install Elastic Agent using Ansible') {
-    steps {
-        dir('ansible') {
-            script {
-                def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
-                def ubuntuContent = "[ubuntu]\n"
-                def centosContent = "[centos]\n"
 
-                ALL_INSTANCES.instances.value.each { instanceName, details ->
-                    if(details.os == 'Ubuntu') {
-                        ubuntuContent += "${details.public_ip} ansible_ssh_user=ubuntu\n"
-                    } else if(details.os == 'Centos') {
-                        centosContent += "${details.public_ip} ansible_ssh_user=ec2-user\n"
-                    }
-                }
-
-                def inventoryContent = ubuntuContent + '\n' + centosContent
-                writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
-
-                echo "ALL_INSTANCES: ${ALL_INSTANCES}"
-                echo "Inventory Content: ${inventoryContent}"
-
-                // Ejecuta Ansible para el grupo Ubuntu
-                if (ubuntuContent.trim() != "[ubuntu]") {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'EC2Keyubuntu', keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_token', variable: 'ENROLLMENT_TOKEN')]) {
+        stage('Terraform') {
+            steps {
+                dir('terraform') {
+                    script {
                         sh """
-                        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini install_elastic_agent.yml \
-                        -vvv -e "elastic_url=$ELASTIC_URL" -e "enrollment_token=$ENROLLMENT_TOKEN" --private-key=$SSH_KEY --limit=ubuntu
+                        terraform init
+                        terraform plan -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}' 
+                        terraform apply -auto-approve -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}'
+                        terraform refresh -var-file=variables.tfvars -var 'war_file_name=${WAR_FILE_NAME}' 
                         """
                     }
                 }
+            }
+        }
 
-                // Ejecuta Ansible para el grupo CentOS
-                if (centosContent.trim() != "[centos]") {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'EC2Keycentos', keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_token', variable: 'ENROLLMENT_TOKEN')]) {
-                        sh """
-                        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini install_elastic_agent.yml \
-                        -vvv -e "elastic_url=$ELASTIC_URL" -e "enrollment_token=$ENROLLMENT_TOKEN" --private-key=$SSH_KEY --limit=centos
-                        """
+        stage('Obtain outputs') {
+            steps {
+                dir('terraform') {
+                    script {
+                        BUCKET_NAME = sh(returnStdout: true, script: "terraform output bucket_name").trim()
+                        jsonOutput = sh(returnStdout: true, script: 'terraform output -json').trim()
+                    }
+                }
+            }
+        }   
+
+        stage('Download Elastic APM Agent') {
+            steps {
+                sh "curl -o 'elastic-apm-agent.jar' -L 'https://oss.sonatype.org/service/local/artifact/maven/redirect?r=releases&g=co.elastic.apm&a=elastic-apm-agent&v=LATEST'"
+            }
+        }
+
+        stage('Upload artifacts to S3 bucket') {
+            steps {
+                withAWS(credentials: 'AWSKey') {
+                    // Upload Elastic Agent
+                    sh "aws s3 cp elastic-apm-agent.jar s3://${BUCKET_NAME}/elastic-apm-agent.jar"
+                    // Upload .war
+                    sh "aws s3 cp vprofile/target/vprofile-v2.war s3://${BUCKET_NAME}/${WAR_FILE_NAME}"
+                }
+            }
+        }
+
+        stage('Install Elastic Agent using Ansible') {
+            steps {
+                dir('ansible') {
+                    script {
+                        def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
+                        def ubuntuContent = "[ubuntu]\n"
+                        def centosContent = "[centos]\n"
+
+                        ALL_INSTANCES.instances.value.each { instanceName, details ->
+                            if(details.os == 'Ubuntu') {
+                                ubuntuContent += "${details.public_ip} ansible_ssh_user=ubuntu\n"
+                            } else if(details.os == 'Centos') {
+                                centosContent += "${details.public_ip} ansible_ssh_user=ec2-user\n"
+                            }
+                        }
+
+                        def inventoryContent = ubuntuContent + '\n' + centosContent
+                        writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
+
+                        echo "ALL_INSTANCES: ${ALL_INSTANCES}"
+                        echo "Inventory Content: ${inventoryContent}"
+
+                        // Ejecuta Ansible para el grupo Ubuntu
+                        if (ubuntuContent.trim() != "[ubuntu]") {
+                            withCredentials([sshUserPrivateKey(credentialsId: 'EC2Keyubuntu', keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_token', variable: 'ENROLLMENT_TOKEN')]) {
+                                sh """
+                                ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini install_elastic_agent.yml \
+                                -vvv -e "elastic_url=$ELASTIC_URL" -e "enrollment_token=$ENROLLMENT_TOKEN" --private-key=$SSH_KEY --limit=ubuntu
+                                """
+                            }
+                        }
+
+                        // Ejecuta Ansible para el grupo CentOS
+                        if (centosContent.trim() != "[centos]") {
+                            withCredentials([sshUserPrivateKey(credentialsId: 'EC2Keycentos', keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_token', variable: 'ENROLLMENT_TOKEN')]) {
+                                sh """
+                                ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini install_elastic_agent.yml \
+                                -vvv -e "elastic_url=$ELASTIC_URL" -e "enrollment_token=$ENROLLMENT_TOKEN" --private-key=$SSH_KEY --limit=centos
+                                """
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Setup APM Agent on Tomcat') {
+            steps {
+                dir('ansible') {
+                    script {
+                        if (ubuntuContent.trim() != "[ubuntu]") {
+                            withCredentials([sshUserPrivateKey(credentialsId: 'EC2Keyubuntu', keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_apm_token', variable: 'ELASTIC_APM_TOKEN')]) {
+                                sh """
+                                ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini setup_apm.yml \
+                                -vvv -e "bucket_name=$BUCKET_NAME" -e "agent_file_name=elastic-apm-agent.jar" -e "service_name=$SERVICE_NAME" -e "elastic_apm_url=$ELASTIC_APM_URL" -e "elastic_apm_token=$ELASTIC_APM_TOKEN" \
+                                --private-key=$SSH_KEY --limit=ubuntu
+                                """
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
-
-
-
-
-
-  }
-}
-
-
-
