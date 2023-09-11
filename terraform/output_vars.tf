@@ -12,6 +12,11 @@ locals {
 }
 
 output "instances" {
-  value = {for k, v in local.all_instances: k => v if k != null && length(tr(k, "vprofile", "")) != length(k)}
+  value = {
+    for k, v in local.all_instances: k => v 
+    if k != null && length(regexall(".*vprofile.*", k)) > 0
+  }
 }
+
+
 
