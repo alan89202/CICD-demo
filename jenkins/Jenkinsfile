@@ -68,29 +68,29 @@ pipeline {
    }
   }
   stage('Install Elastic Agent using Ansible') {
-   steps {
-    script {
-     // Extract IPs and OS from Terraform output
-     def jsonOutput = sh(returnStdout: true, script: "terraform output -json").trim()
-     def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
-            
-     ALL_INSTANCES.each { ip, os ->
-     def inventoryContent = ip
-     writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
-     sh 'echo "Inventory File Location: ${WORKSPACE}/ansible_inventory.ini"'
+            steps {
+                dir('ansible') {
+                    script {
+                        def jsonOutput = sh(returnStdout: true, script: 'terraform output -json').trim()
+                        def ALL_INSTANCES = extractIpsFromTerraformOutput(jsonOutput)
 
-       
-      def CREDENTIAL_ID = (os == "ubuntu" ? "EC2Keyubuntu" : "EC2Keycentos")
-      withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY')]) {
-       sh """
-        
-        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini ansible/install_elastic_agent.yml -vvv -e "elastic_url=${ELASTIC_URL}" -e "enrollment_token=${ENROLLMENT_TOKEN}" --private-key=${SSH_KEY}
-       """
-      }
-     }
-    }
-   }
-  }
+                        ALL_INSTANCES.each { ip, os ->
+                            def inventoryContent = ip
+                            writeFile(file: 'ansible_inventory.ini', text: inventoryContent)
+                            sh 'cat ansible_inventory.ini'
+
+                            def CREDENTIAL_ID = (os == 'ubuntu' ? 'EC2Keyubuntu' : 'EC2Keycentos')
+                            withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY')]) {
+                                sh '''
+                                    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini ansible/install_elastic_agent.yml \
+                                    -vvv -e "elastic_url=${ELASTIC_URL}" -e "enrollment_token=${ENROLLMENT_TOKEN}" --private-key=${SSH_KEY}
+                                '''
+                            }
+                        }
+                    }
+                }
+            }
+        }
  }
 }
 
