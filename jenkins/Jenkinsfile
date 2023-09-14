@@ -2,8 +2,7 @@ def BUCKET_NAME
 def jsonOutput
 def WAR_FILE_NAME = "Build${BUILD_NUMBER}_vprofile-v2.war"
 def ELASTIC_URL = "https://d22cd37ad51c47e68788401782fe7a0d.fleet.us-east-1.aws.found.io:443"
-def ELASTIC_APM_URL = "https://observability-demo.apm.us-east-1.aws.found.io"
-def SERVICE_NAME = WAR_FILE_NAME.minus(".war").split("_")[1]
+
 
 def extractIpsFromTerraformOutput(jsonString) {
     def parsedData = readJSON text: jsonString
@@ -101,7 +100,7 @@ pipeline {
                         echo "ALL_INSTANCES: ${ALL_INSTANCES}"
                         echo "Inventory Content: ${inventoryContent}"
 
-                        // Ejecuta Ansible para el grupo Ubuntu
+                        
                         if (ubuntuContent.trim() != "[ubuntu]") {
                             withCredentials([sshUserPrivateKey(credentialsId: 'EC2Keyubuntu', keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_token', variable: 'ENROLLMENT_TOKEN')]) {
                                 sh """
@@ -111,30 +110,12 @@ pipeline {
                             }
                         }
 
-                        // Ejecuta Ansible para el grupo CentOS
+                        
                         if (centosContent.trim() != "[centos]") {
                             withCredentials([sshUserPrivateKey(credentialsId: 'EC2Keycentos', keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_token', variable: 'ENROLLMENT_TOKEN')]) {
                                 sh """
                                 ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini install_elastic_agent.yml \
                                 -vvv -e "elastic_url=$ELASTIC_URL" -e "enrollment_token=$ENROLLMENT_TOKEN" --private-key=$SSH_KEY --limit=centos
-                                """
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Setup APM Agent on Tomcat') {
-            steps {
-                dir('ansible') {
-                    script {
-                        if (ubuntuContent.trim() != "[ubuntu]") {
-                            withCredentials([sshUserPrivateKey(credentialsId: 'EC2Keyubuntu', keyFileVariable: 'SSH_KEY'), string(credentialsId: 'Elastic_apm_token', variable: 'ELASTIC_APM_TOKEN')]) {
-                                sh """
-                                ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible_inventory.ini setup_apm.yml \
-                                -vvv -e "bucket_name=$BUCKET_NAME" -e "agent_file_name=elastic-apm-agent.jar" -e "service_name=$SERVICE_NAME" -e "elastic_apm_url=$ELASTIC_APM_URL" -e "elastic_apm_token=$ELASTIC_APM_TOKEN" \
-                                --private-key=$SSH_KEY --limit=ubuntu
                                 """
                             }
                         }
